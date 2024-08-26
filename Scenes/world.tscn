@@ -1,0 +1,80 @@
+[gd_scene load_steps=10 format=3 uid="uid://cu20731wjfdl6"]
+
+[ext_resource type="PackedScene" uid="uid://ve5i66jsbfg5" path="res://Scenes/player.tscn" id="1_gf5qh"]
+[ext_resource type="PackedScene" uid="uid://dj1wvyduvfa7" path="res://Scenes/obstacle.tscn" id="2_bxif6"]
+[ext_resource type="Script" path="res://Scripts/ObstacleDespawner.gd" id="3_phtxq"]
+[ext_resource type="Script" path="res://Scripts/ObstacleSpawner.gd" id="4_pyfnh"]
+[ext_resource type="Script" path="res://Scripts/GameUI.gd" id="5_vwg3y"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_46wa2"]
+
+[sub_resource type="Sky" id="Sky_3chmc"]
+sky_material = SubResource("ProceduralSkyMaterial_46wa2")
+
+[sub_resource type="Environment" id="Environment_uc83c"]
+background_mode = 2
+sky = SubResource("Sky_3chmc")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2cw5w"]
+margin = 0.0
+
+[node name="World" type="Node3D"]
+
+[node name="Ground" type="CSGBox3D" parent="."]
+transform = Transform3D(10.6445, 0, 0, 0, 0.2, 0, 0, 0, 41.0417, 0, 0, -21)
+use_collision = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 2.3, 0)
+fov = 52.2931
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 7, -22)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_uc83c")
+
+[node name="Player" parent="." instance=ExtResource("1_gf5qh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2)
+
+[node name="obstacle" parent="." instance=ExtResource("2_bxif6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -40)
+
+[node name="ObstacleDespawner" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("3_phtxq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ObstacleDespawner"]
+transform = Transform3D(11.7128, 0, 0, 0, 9.59266, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_2cw5w")
+
+[node name="ObstacleSpawner" type="Node3D" parent="."]
+script = ExtResource("4_pyfnh")
+
+[node name="SpawnDelay" type="Timer" parent="ObstacleSpawner"]
+autostart = true
+
+[node name="SpawnPosition" type="Marker3D" parent="ObstacleSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -40)
+
+[node name="UserInterface" type="CanvasLayer" parent="."]
+
+[node name="GameUI" type="Control" parent="UserInterface"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_vwg3y")
+
+[node name="Score" type="Label" parent="UserInterface/GameUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 32
+text = "Score : 00"
+
+[connection signal="body_entered" from="ObstacleDespawner" to="ObstacleDespawner" method="_on_body_entered"]
+[connection signal="timeout" from="ObstacleSpawner/SpawnDelay" to="ObstacleSpawner" method="_on_spawn_delay_timeout"]

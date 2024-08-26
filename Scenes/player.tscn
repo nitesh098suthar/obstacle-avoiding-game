@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://ve5i66jsbfg5"]
+
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_4gq52"]
+[ext_resource type="Material" uid="uid://nslwur8iutw5" path="res://Materials/player_mat.tres" id="1_h7y51"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_p6yfb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jeit2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5kal0"]
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_4gq52")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("1_h7y51")
+mesh = SubResource("BoxMesh_p6yfb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_jeit2")
+
+[node name="Collision" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1.1, 0, 0, 0, 1.089, 0, 0, 0, 1.1, 0, 0, 0)
+shape = SubResource("BoxShape3D_5kal0")
+
+[connection signal="body_entered" from="Collision" to="." method="_on_collision_body_entered"]
